@@ -247,6 +247,7 @@
 				.eq(1).css('top', 100 * (1 - this.color.value.h)).end()
 				.eq(2).css('top', 100 * (1 - this.color.value.a));
 			this.previewColor();
+			this.previewInput();
 			this.element.trigger({
 				type: 'changeColor',
 				color: this.color
@@ -298,6 +299,18 @@
 			//set te color for alpha slider
 			if (this.alpha) {
 				this.alpha.backgroundColor = this.color.toHex();
+			}
+
+
+			
+		},
+
+		previewInput: function(){
+			var input = (this.component ? this.element.find('input') : this.element);
+			try {
+				input.prop('value', this.format.call(this));
+			} catch(e) {
+				input.prop('value', this.color.toHex());
 			}
 		},
 		
@@ -369,6 +382,8 @@
 				this.color[this.slider.callTop].call(this.color, top/100);
 			}
 			this.previewColor();
+			this.previewInput();
+			
 			this.element.trigger({
 				type: 'changeColor',
 				color: this.color
