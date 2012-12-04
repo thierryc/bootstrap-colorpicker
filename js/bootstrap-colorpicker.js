@@ -150,6 +150,10 @@
 				'keyup': $.proxy(this.update, this)
 			});
 		} else if (this.component){
+			(this.targetInput || this.element.find('input')).on({
+				'keyup': $.proxy(this.update, this)
+			});
+
 			this.component.on({
 				'click': $.proxy(this.show, this)
 			});
@@ -229,15 +233,22 @@
 		},
 		
 		update: function(){
-                        var colorStr = this.isInput ? this.element.prop('value') : this.element.data('color');
-                        if(colorStr != ""){
-                            this.color = new Color(colorStr);
-                            this.picker.find('i')
-                                    .eq(0).css({left: this.color.value.s*100, top: 100 - this.color.value.b*100}).end()
-                                    .eq(1).css('top', 100 * (1 - this.color.value.h)).end()
-                                    .eq(2).css('top', 100 * (1 - this.color.value.a));
-                            this.previewColor();
-                        }
+			var input = ( this.isInput && this.element ) || ( this.component && this.targetInput ) || ( this.component && this.element.find('input') ) || false;
+			var colorStr = 
+				this.isInput ? input.prop('value') : (
+					this.component && $.inArray( true, $.map( $.extend( {}, CPGlobal.stringParsers ), function(parser,idx) {
+						return parser.re.exec( input.prop('value') ) && true || false;
+					} ) ) >= 0 ? input.prop('value') : this.element.data('color')
+				);
+
+      if(colorStr != ""){
+      	this.color = new Color(colorStr);
+        this.picker.find('i')
+        	.eq(0).css({left: this.color.value.s*100, top: 100 - this.color.value.b*100}).end()
+          .eq(1).css('top', 100 * (1 - this.color.value.h)).end()
+          .eq(2).css('top', 100 * (1 - this.color.value.a));
+        this.previewColor();
+      }
 		},
 		
 		setValue: function(newColor) {
